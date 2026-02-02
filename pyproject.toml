@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "focus-stealer"
+version = "0.1.0"
+description = "Prints the active macOS app focus"
+authors = ["Your Name <you@example.com>"]
+packages = [{ include = "focus_stealer.py", from = "." }]
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.15"
+pyobjc = "12.1"
+
+[tool.poetry.scripts]
+focus-stealer = "focus_stealer:main"
+
+[build-system]
+requires = ["poetry-core>=1.9.0"]
+build-backend = "poetry.core.masonry.api"
