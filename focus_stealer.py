@@ -23,6 +23,9 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
 
 
 def main(argv: Optional[list[str]] = None) -> None:
+    """
+        Additional thanks to stack exchange users: https://apple.stackexchange.com/questions/123730/is-there-a-way-to-detect-what-program-is-stealing-focus-on-my-mac
+    """
     args = parse_args(argv)
     workspace = NSWorkspace.sharedWorkspace()
     active_app = workspace.activeApplication()["NSApplicationName"]
