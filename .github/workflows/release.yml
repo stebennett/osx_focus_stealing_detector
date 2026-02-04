@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+jobs:
+  release:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: FocusStealer
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build release
+        run: swift build -c release
+
+      - name: Create app bundle
+        run: |
+          mkdir -p FocusStealer.app/Contents/MacOS
+          cp .build/release/FocusStealer FocusStealer.app/Contents/MacOS/
+          cat > FocusStealer.app/Contents/Info.plist << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleExecutable</key>
+            <string>FocusStealer</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.github.stebennett.focusstealer</string>
+            <key>CFBundleName</key>
+            <string>FocusStealer</string>
+            <key>CFBundleVersion</key>
+            <string>${GITHUB_REF_NAME#v}</string>
+            <key>LSMinimumSystemVersion</key>
+            <string>13.0</string>
+            <key>LSUIElement</key>
+            <true/>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Zip app bundle
+        run: zip -r FocusStealer.app.zip FocusStealer.app
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: FocusStealer/FocusStealer.app.zip
+          generate_release_notes: true
