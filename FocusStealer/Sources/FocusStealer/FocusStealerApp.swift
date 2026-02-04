@@ -12,8 +12,14 @@ struct FocusStealerApp: App {
     }
 
     var body: some Scene {
-        MenuBarExtra(store.currentAppName ?? "FocusStealer") {
+        MenuBarExtra {
             MenuBarView(store: store)
+        } label: {
+            if let appName = store.currentAppName {
+                Label(appName, systemImage: "eye")
+            } else {
+                Image(systemName: "eye")
+            }
         }
         .menuBarExtraStyle(.window)
     }
