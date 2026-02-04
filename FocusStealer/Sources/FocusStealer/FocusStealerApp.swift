@@ -7,18 +7,16 @@ struct FocusStealerApp: App {
     @ObservedObject private var store: FocusStore
 
     init() {
-        let delegate = AppDelegate.shared
-        self.store = delegate.store
+        self.store = AppDelegate.shared.store
     }
 
     var body: some Scene {
         MenuBarExtra {
             MenuBarView(store: store)
         } label: {
-            if let appName = store.currentAppName {
-                Label(appName, systemImage: "eye")
-            } else {
+            HStack(spacing: 4) {
                 Image(systemName: "eye")
+                Text(store.currentAppName ?? "")
             }
         }
         .menuBarExtraStyle(.window)
@@ -27,12 +25,13 @@ struct FocusStealerApp: App {
 
 @MainActor
 class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
-    static let shared = AppDelegate()
+    static var shared: AppDelegate!
     let store = FocusStore()
     var watcher: FocusWatcher?
 
     override init() {
         super.init()
+        AppDelegate.shared = self
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
