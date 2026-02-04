@@ -1,4 +1,5 @@
 import SwiftUI
+import FocusStealerLib
 
 @main
 struct FocusStealerApp: App {

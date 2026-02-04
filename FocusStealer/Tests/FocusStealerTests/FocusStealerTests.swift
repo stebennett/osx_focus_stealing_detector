@@ -1,29 +1,28 @@
 import Foundation
+import FocusStealerLib
 
-// Simple test runner without XCTest framework dependency
 @main
 struct TestRunner {
     static func main() {
-        var passed = 0
-        var failed = 0
+        var totalPassed = 0
+        var totalFailed = 0
 
-        // Test 1: Placeholder test
+        // Run placeholder test
         print("Running testPlaceholder...")
-        if true {
-            print("  PASSED: testPlaceholder")
-            passed += 1
-        } else {
-            print("  FAILED: testPlaceholder")
-            failed += 1
-        }
+        print("  PASSED: testPlaceholder")
+        totalPassed += 1
 
-        // Summary
+        // Run FocusEvent tests
+        let focusEventResults = runFocusEventTests()
+        totalPassed += focusEventResults.passed
+        totalFailed += focusEventResults.failed
+
         print("\n=== Test Results ===")
-        print("Passed: \(passed)")
-        print("Failed: \(failed)")
-        print("Total: \(passed + failed)")
+        print("Passed: \(totalPassed)")
+        print("Failed: \(totalFailed)")
+        print("Total: \(totalPassed + totalFailed)")
 
-        if failed > 0 {
+        if totalFailed > 0 {
             exit(1)
         }
     }
