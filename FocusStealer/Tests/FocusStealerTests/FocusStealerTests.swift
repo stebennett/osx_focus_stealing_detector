@@ -17,6 +17,11 @@ struct TestRunner {
         totalPassed += focusEventResults.passed
         totalFailed += focusEventResults.failed
 
+        // Run Formatters tests
+        let formattersResults = runFormattersTests()
+        totalPassed += formattersResults.passed
+        totalFailed += formattersResults.failed
+
         print("\n=== Test Results ===")
         print("Passed: \(totalPassed)")
         print("Failed: \(totalFailed)")
