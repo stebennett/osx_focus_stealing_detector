@@ -1,16 +1,59 @@
-# focus-stealer
+# FocusStealer
 
-Simple macOS helper that prints the currently focused application and logs changes. Inspired by this StackExchange question: https://apple.stackexchange.com/q/123730
+A native macOS menu bar app that tracks which applications have focus. Helps identify "focus stealing" apps and understand how you spend time across applications.
 
-## Setup with uv
+Inspired by this StackExchange question: https://apple.stackexchange.com/q/123730
 
-1) Install uv (see https://docs.astral.sh/uv/getting-started/installation/).
-2) From the repo root, sync dependencies:
-   - `uv sync`
+## Features
 
-## Run
+- Shows currently focused app in the menu bar
+- Click to see recent focus history with timestamps and durations
+- Persists daily history to `~/.focus-stealer/YYYY-MM-DD.json`
+- Zero CPU usage while idle (event-driven, no polling)
 
-- Run indefinitely: `uv run focus-stealer`
-- Run for a set duration (seconds): `uv run focus-stealer --duration 300`
+## Requirements
 
-Press `Ctrl+C` to exit early.
+- macOS 13+ (Ventura)
+- Swift 5.9+ (for building)
+
+## Build & Run
+
+```bash
+cd FocusStealer
+swift build
+swift run
+```
+
+For a release build:
+
+```bash
+swift build -c release
+# Binary at .build/release/FocusStealer
+```
+
+## Usage
+
+1. Run the app - it appears in your menu bar showing the current app name
+2. Click to see your focus history for today
+3. Switch between apps - the menu bar updates and history accumulates
+4. Quit via the dropdown menu or Cmd+Q
+
+## Data Storage
+
+History is saved to `~/.focus-stealer/` with one JSON file per day:
+
+```
+~/.focus-stealer/
+├── 2026-02-04.json
+├── 2026-02-05.json
+└── ...
+```
+
+## Legacy Python Version
+
+The original Python CLI tool is still available in the repository root (`focus_stealer.py`). To use it:
+
+```bash
+uv sync
+uv run focus-stealer
+```
