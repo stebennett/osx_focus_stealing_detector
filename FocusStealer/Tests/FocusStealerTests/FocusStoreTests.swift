@@ -58,5 +58,37 @@ func runFocusStoreTests() -> (passed: Int, failed: Int) {
         failed += 1
     }
 
+    // Test 5: Save and load history
+    print("Running testSaveAndLoadHistory...")
+    do {
+        let tempDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("FocusStealerTest-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+
+        defer {
+            try? FileManager.default.removeItem(at: tempDir)
+        }
+
+        let store = FocusStore(storageDirectory: tempDir)
+        store.recordFocusChange(appName: "Safari", bundleId: "com.apple.Safari")
+        Thread.sleep(forTimeInterval: 0.1)
+        store.recordFocusChange(appName: "iTerm2", bundleId: "com.googlecode.iterm2")
+        store.save()
+
+        let store2 = FocusStore(storageDirectory: tempDir)
+        store2.load()
+
+        if store2.history.count == 1 && store2.history.first?.appName == "Safari" {
+            print("  PASSED: testSaveAndLoadHistory")
+            passed += 1
+        } else {
+            print("  FAILED: testSaveAndLoadHistory - history count: \(store2.history.count)")
+            failed += 1
+        }
+    } catch {
+        print("  FAILED: testSaveAndLoadHistory - \(error)")
+        failed += 1
+    }
+
     return (passed, failed)
 }
