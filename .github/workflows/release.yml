@@ -18,9 +18,10 @@ jobs:
 
       - name: Create app bundle
         run: |
+          VERSION="${GITHUB_REF_NAME#v}"
           mkdir -p FocusStealer.app/Contents/MacOS
           cp .build/release/FocusStealer FocusStealer.app/Contents/MacOS/
-          cat > FocusStealer.app/Contents/Info.plist << 'EOF'
+          cat > FocusStealer.app/Contents/Info.plist << EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
@@ -32,7 +33,7 @@ jobs:
             <key>CFBundleName</key>
             <string>FocusStealer</string>
             <key>CFBundleVersion</key>
-            <string>${GITHUB_REF_NAME#v}</string>
+            <string>${VERSION}</string>
             <key>LSMinimumSystemVersion</key>
             <string>13.0</string>
             <key>LSUIElement</key>
@@ -40,6 +41,9 @@ jobs:
           </dict>
           </plist>
           EOF
+
+      - name: Ad-hoc sign app bundle
+        run: codesign --sign - --force --deep FocusStealer.app
 
       - name: Zip app bundle
         run: zip -r FocusStealer.app.zip FocusStealer.app
