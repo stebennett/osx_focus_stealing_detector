@@ -31,6 +31,43 @@ swift build -c release
 # Binary at .build/release/FocusStealer
 ```
 
+## Installation
+
+### Download
+
+Download `FocusStealer.app.zip` from the [Releases](https://github.com/stebennett/osx_focus_stealing_detector/releases) page and unzip it.
+
+### Install
+
+Move the app to your Applications folder:
+
+```bash
+mv FocusStealer.app /Applications/
+```
+
+Since the app is unsigned, you need to remove the quarantine attribute before first launch:
+
+```bash
+xattr -d com.apple.quarantine /Applications/FocusStealer.app
+```
+
+Or: Right-click the app → Open → click "Open" in the dialog.
+
+### Start at Login
+
+To have FocusStealer launch automatically when you log in:
+
+1. Open **System Settings** → **General** → **Login Items**
+2. Click **+** under "Open at Login"
+3. Select **FocusStealer** from Applications
+4. Click **Add**
+
+Or via Terminal:
+
+```bash
+osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/FocusStealer.app", hidden:false}'
+```
+
 ## Usage
 
 1. Run the app - it appears in your menu bar showing the current app name
