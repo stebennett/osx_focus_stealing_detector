@@ -90,5 +90,31 @@ func runFocusStoreTests() -> (passed: Int, failed: Int) {
         failed += 1
     }
 
+    // Test 6: todayTimeByApp returns empty for empty history
+    print("Running testTodayTimeByAppEmpty...")
+    do {
+        let tempDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("FocusStealerTest-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+
+        defer {
+            try? FileManager.default.removeItem(at: tempDir)
+        }
+
+        let store = FocusStore(storageDirectory: tempDir)
+        let result = store.todayTimeByApp
+
+        if result.isEmpty {
+            print("  PASSED: testTodayTimeByAppEmpty")
+            passed += 1
+        } else {
+            print("  FAILED: testTodayTimeByAppEmpty - Expected empty result for empty history")
+            failed += 1
+        }
+    } catch {
+        print("  FAILED: testTodayTimeByAppEmpty - \(error)")
+        failed += 1
+    }
+
     return (passed, failed)
 }

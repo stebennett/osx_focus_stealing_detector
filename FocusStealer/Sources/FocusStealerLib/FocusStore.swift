@@ -5,6 +5,10 @@ public class FocusStore: ObservableObject {
     @Published public private(set) var currentBundleId: String?
     @Published public private(set) var history: [FocusEvent] = []
 
+    public var todayTimeByApp: [(appName: String, duration: TimeInterval)] {
+        return []
+    }
+
     private var currentEventStart: Date?
     private let storageDirectory: URL
 
