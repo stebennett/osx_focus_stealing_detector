@@ -173,5 +173,81 @@ func runFocusStoreTests() -> (passed: Int, failed: Int) {
         failed += 1
     }
 
+    // Test 8: todayTimeByApp top 5 + Other bucketing
+    print("Running testTodayTimeByAppTop5PlusOther...")
+    do {
+        let tempDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("FocusStealerTest-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+
+        defer {
+            try? FileManager.default.removeItem(at: tempDir)
+        }
+
+        let store = FocusStore(storageDirectory: tempDir)
+
+        // Create 7 apps with different durations
+        let apps = [
+            ("App1", "com.test.app1", 7.0),
+            ("App2", "com.test.app2", 6.0),
+            ("App3", "com.test.app3", 5.0),
+            ("App4", "com.test.app4", 4.0),
+            ("App5", "com.test.app5", 3.0),
+            ("App6", "com.test.app6", 2.0),
+            ("App7", "com.test.app7", 1.0),
+        ]
+
+        // Simulate focus changes with sleep to create durations
+        for (name, bundleId, duration) in apps {
+            store.recordFocusChange(appName: name, bundleId: bundleId)
+            Thread.sleep(forTimeInterval: duration)
+        }
+        // Final switch to finalize last app
+        store.recordFocusChange(appName: "Final", bundleId: "com.test.final")
+
+        let result = store.todayTimeByApp
+
+        var testPassed = true
+        var failureReason = ""
+
+        // Should have top 5 + Other = 6 entries
+        if result.count != 6 {
+            testPassed = false
+            failureReason = "Expected 6 entries (top 5 + Other), got \(result.count)"
+        } else if result[0].appName != "App1" {
+            testPassed = false
+            failureReason = "Expected App1 first, got \(result[0].appName)"
+        } else if result[1].appName != "App2" {
+            testPassed = false
+            failureReason = "Expected App2 second, got \(result[1].appName)"
+        } else if result[2].appName != "App3" {
+            testPassed = false
+            failureReason = "Expected App3 third, got \(result[2].appName)"
+        } else if result[3].appName != "App4" {
+            testPassed = false
+            failureReason = "Expected App4 fourth, got \(result[3].appName)"
+        } else if result[4].appName != "App5" {
+            testPassed = false
+            failureReason = "Expected App5 fifth, got \(result[4].appName)"
+        } else if result[5].appName != "Other" {
+            testPassed = false
+            failureReason = "Expected Other last, got \(result[5].appName)"
+        } else if !(result[5].duration >= 2.5 && result[5].duration <= 3.5) {
+            testPassed = false
+            failureReason = "Other duration should be ~3s, got \(result[5].duration)"
+        }
+
+        if testPassed {
+            print("  PASSED: testTodayTimeByAppTop5PlusOther")
+            passed += 1
+        } else {
+            print("  FAILED: testTodayTimeByAppTop5PlusOther - \(failureReason)")
+            failed += 1
+        }
+    } catch {
+        print("  FAILED: testTodayTimeByAppTop5PlusOther - \(error)")
+        failed += 1
+    }
+
     return (passed, failed)
 }
