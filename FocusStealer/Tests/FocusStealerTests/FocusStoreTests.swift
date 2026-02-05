@@ -116,5 +116,62 @@ func runFocusStoreTests() -> (passed: Int, failed: Int) {
         failed += 1
     }
 
+    // Test 7: todayTimeByApp aggregation logic
+    print("Running testTodayTimeByAppAggregation...")
+    do {
+        let tempDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("FocusStealerTest-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+
+        defer {
+            try? FileManager.default.removeItem(at: tempDir)
+        }
+
+        let store = FocusStore(storageDirectory: tempDir)
+
+        // Simulate focus changes to build history
+        // Using durations > 1 second to pass the filter threshold
+        store.recordFocusChange(appName: "Safari", bundleId: "com.apple.Safari")
+        Thread.sleep(forTimeInterval: 1.1)
+        store.recordFocusChange(appName: "VS Code", bundleId: "com.microsoft.VSCode")
+        Thread.sleep(forTimeInterval: 1.2)
+        store.recordFocusChange(appName: "Safari", bundleId: "com.apple.Safari")
+        Thread.sleep(forTimeInterval: 1.1)
+        store.recordFocusChange(appName: "Terminal", bundleId: "com.apple.Terminal")
+
+        let result = store.todayTimeByApp
+
+        // Safari should be first (1.1 + 1.1 = ~2.2s total)
+        // VS Code should be second (~1.2s)
+        // Terminal is currently active, not in history yet
+        var testPassed = true
+        var failureReason = ""
+
+        if result.count != 2 {
+            testPassed = false
+            failureReason = "Expected 2 apps, got \(result.count)"
+        } else if result[0].appName != "Safari" {
+            testPassed = false
+            failureReason = "Expected Safari first, got \(result[0].appName)"
+        } else if result[1].appName != "VS Code" {
+            testPassed = false
+            failureReason = "Expected VS Code second, got \(result[1].appName)"
+        } else if result[0].duration <= result[1].duration {
+            testPassed = false
+            failureReason = "Safari should have more time than VS Code"
+        }
+
+        if testPassed {
+            print("  PASSED: testTodayTimeByAppAggregation")
+            passed += 1
+        } else {
+            print("  FAILED: testTodayTimeByAppAggregation - \(failureReason)")
+            failed += 1
+        }
+    } catch {
+        print("  FAILED: testTodayTimeByAppAggregation - \(error)")
+        failed += 1
+    }
+
     return (passed, failed)
 }

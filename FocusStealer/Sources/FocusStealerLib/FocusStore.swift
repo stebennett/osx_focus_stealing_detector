@@ -6,7 +6,19 @@ public class FocusStore: ObservableObject {
     @Published public private(set) var history: [FocusEvent] = []
 
     public var todayTimeByApp: [(appName: String, duration: TimeInterval)] {
-        return []
+        // Group by app name and sum durations
+        var timeByApp: [String: TimeInterval] = [:]
+        for event in history {
+            timeByApp[event.appName, default: 0] += event.duration
+        }
+
+        // Filter out very short durations (<1 second)
+        let filtered = timeByApp.filter { $0.value >= 1.0 }
+
+        // Sort by duration descending
+        let sorted = filtered.sorted { $0.value > $1.value }
+
+        return sorted.map { (appName: $0.key, duration: $0.value) }
     }
 
     private var currentEventStart: Date?
