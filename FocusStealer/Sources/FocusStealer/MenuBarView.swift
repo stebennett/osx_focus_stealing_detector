@@ -36,6 +36,29 @@ struct MenuBarView: View {
             Divider()
                 .padding(.vertical, 4)
 
+            // Today's usage histogram section
+            Section {
+                if store.todayTimeByApp.isEmpty {
+                    Text("No usage data yet")
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                } else {
+                    HistogramView(items: store.todayTimeByApp)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                }
+            } header: {
+                Text("Today's Usage")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 4)
+            }
+
+            Divider()
+                .padding(.vertical, 4)
+
             // Recent history section
             Section {
                 if store.history.isEmpty {
@@ -46,7 +69,7 @@ struct MenuBarView: View {
                 } else {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 0) {
-                            ForEach(store.history.prefix(20)) { event in
+                            ForEach(store.history.prefix(10)) { event in
                                 HStack {
                                     Text(event.appName)
                                     Spacer()
