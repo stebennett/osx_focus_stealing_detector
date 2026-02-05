@@ -82,7 +82,7 @@ struct MenuBarView: View {
                             }
                         }
                     }
-                    .frame(maxHeight: 300)
+                    .frame(maxHeight: 150)
                 }
             } header: {
                 Text("Recent (today)")
