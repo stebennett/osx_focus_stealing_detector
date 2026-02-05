@@ -16,7 +16,7 @@ struct HistogramView: View {
                     Text(item.appName)
                         .lineLimit(1)
                         .truncationMode(.tail)
-                        .frame(width: 70, alignment: .leading)
+                        .frame(width: 120, alignment: .leading)
 
                     // Bar
                     GeometryReader { geometry in
