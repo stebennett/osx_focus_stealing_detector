@@ -7,6 +7,7 @@ Inspired by this StackExchange question: https://apple.stackexchange.com/q/12373
 ## Features
 
 - Shows currently focused app in the menu bar
+- **Today's Usage histogram** showing time spent per app with horizontal bars (top 5 + "Other")
 - Click to see recent focus history with timestamps and durations
 - Persists daily history to `~/.focus-stealer/YYYY-MM-DD.json`
 - Zero CPU usage while idle (event-driven, no polling)
